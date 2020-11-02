@@ -1,8 +1,9 @@
 package com.mobiquity.miniapp.model.repository
 
 import com.mobiquity.miniapp.model.remote.CategoryService
+import javax.inject.Inject
 
-class CategoryRepository constructor(
+class CategoryRepository @Inject constructor(
     private val categoryService: CategoryService
 ) : BaseRepository() {
 
