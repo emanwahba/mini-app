@@ -1,7 +1,8 @@
-package com.mobiquity.miniapp
+package com.mobiquity.miniapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.mobiquity.miniapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
