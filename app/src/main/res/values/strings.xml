@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Mini App</string>
+    <string name="product_name">Product: %s</string>
+    <string name="product_price">Price: %1$s %2$s</string>
 </resources>

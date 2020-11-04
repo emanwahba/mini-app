@@ -14,7 +14,7 @@ fun ImageView.setProductImage(item: Product?, width: Float, height: Float) {
     }
 }
 
-fun loadAndSetImage(
+private fun loadAndSetImage(
     url: String,
     width: Int,
     height: Int,

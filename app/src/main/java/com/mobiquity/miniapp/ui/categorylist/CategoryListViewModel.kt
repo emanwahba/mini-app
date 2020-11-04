@@ -1,35 +1,36 @@
 package com.mobiquity.miniapp.ui.categorylist
 
-import androidx.lifecycle.*
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mobiquity.miniapp.model.entities.Category
 import com.mobiquity.miniapp.model.entities.Product
 import com.mobiquity.miniapp.model.repository.CategoryRepository
 import com.mobiquity.miniapp.utils.Result
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class CategoryListViewModel @Inject constructor(
+class CategoryListViewModel @ViewModelInject constructor(
     private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
-    private var categories = MutableLiveData<Result<List<Category>>>()
+    private val _categories = MutableLiveData<Result<List<Category>>>()
+    val categories: LiveData<Result<List<Category>>> = _categories
 
     private val _navigateToProductDetails = MutableLiveData<Product>()
-    val navigateToProductDetails
-        get() = _navigateToProductDetails
+    val navigateToProductDetails: LiveData<Product> = _navigateToProductDetails
 
     fun fetchCatalog() = viewModelScope.launch {
-        categories.postValue(Result.Loading())
+        _categories.postValue(Result.Loading())
 
         val result = categoryRepository.getCategoryList()
         if (result.status == Result.Status.SUCCESS && result.data != null) {
-            categories.postValue(Result.Success(result.data!!))
+            _categories.postValue(Result.Success(result.data!!))
         } else if (result.status == Result.Status.ERROR) {
-            categories.postValue(Result.Error(result.message))
+            _categories.postValue(Result.Error(result.message))
         }
     }
-
-    fun getCategories(): MutableLiveData<Result<List<Category>>> = categories
 
     fun onProductClicked(product: Product) {
         _navigateToProductDetails.value = product
@@ -38,5 +39,4 @@ class CategoryListViewModel @Inject constructor(
     fun onProductDetailsNavigated() {
         _navigateToProductDetails.value = null
     }
-
 }

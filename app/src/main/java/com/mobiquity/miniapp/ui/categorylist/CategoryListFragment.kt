@@ -6,49 +6,46 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobiquity.miniapp.R
 import com.mobiquity.miniapp.utils.Result
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.category_list_fragment.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CategoryListFragment : Fragment() {
 
-    @Inject
-    lateinit var viewModel: CategoryListViewModel
+    private val viewModel: CategoryListViewModel by viewModels()
+    private lateinit var adapter: CatalogRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.fetchCatalog()
-
-        viewModel.navigateToProductDetails.observe(
-            viewLifecycleOwner, Observer { product ->
-                product?.let {
-                    //TODO add navigation code here
-                    viewModel.onProductDetailsNavigated()
-                }
-            })
-
         return inflater.inflate(R.layout.category_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.fetchCatalog()
+        setupRecyclerView()
+        setupObservers()
+    }
 
+    private fun setupRecyclerView() {
         val linearLayoutManager = LinearLayoutManager(activity)
         category_list.layoutManager = linearLayoutManager
-
-        val adapter = CatalogRecyclerViewAdapter(ProductClickListener { product ->
+        adapter = CatalogRecyclerViewAdapter(ProductClickListener { product ->
             viewModel.onProductClicked(product)
         })
         category_list.adapter = adapter
+    }
 
-        viewModel.getCategories().observe(viewLifecycleOwner, Observer {
+    private fun setupObservers() {
+        viewModel.categories.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Result.Status.SUCCESS -> {
                     progress_bar.visibility = View.GONE
@@ -61,6 +58,16 @@ class CategoryListFragment : Fragment() {
                     progress_bar.visibility = View.VISIBLE
                     category_list.visibility = View.GONE
                 }
+            }
+        })
+
+        viewModel.navigateToProductDetails.observe(viewLifecycleOwner, Observer { product ->
+            product?.let {
+                this.findNavController().navigate(
+                    CategoryListFragmentDirections
+                        .actionCategoryListFragmentToProductDetailsFragment(product)
+                )
+                viewModel.onProductDetailsNavigated()
             }
         })
     }

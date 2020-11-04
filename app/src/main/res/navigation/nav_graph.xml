@@ -9,5 +9,20 @@
         android:id="@+id/categoryListFragment"
         android:name="com.mobiquity.miniapp.ui.categorylist.CategoryListFragment"
         android:label="category_list_fragment"
-        tools:layout="@layout/category_list_fragment" />
+        tools:layout="@layout/category_list_fragment">
+        <action
+            android:id="@+id/action_categoryListFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/productDetailsFragment"
+        android:name="com.mobiquity.miniapp.ui.productdetails.ProductDetailsFragment"
+        android:label="product_details_fragment"
+        tools:layout="@layout/product_details_fragment">
+        <argument
+            android:name="product"
+            app:argType="com.mobiquity.miniapp.model.entities.Product" />
+    </fragment>
 </navigation>
